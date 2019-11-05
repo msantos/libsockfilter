@@ -50,13 +50,14 @@ int sockcmp(const char *rules, int debug, const struct sockaddr *addr,
   if (cdb_init(&c, fd) != 0) {
     if (debug)
       (void)fprintf(stderr, "libsockfilter:unable to open:%s\n", rules);
+    (void)close(fd);
     return -1;
   }
 
   switch (addr->sa_family) {
   case AF_INET:
     if (addrlen < sizeof(struct sockaddr_in))
-      return -1;
+      goto LIBSOCKFILTER_DONE;
 
     (void)inet_ntop(AF_INET, &(((const struct sockaddr_in *)addr)->sin_addr),
                     buf, INET6_ADDRSTRLEN);
@@ -68,7 +69,7 @@ int sockcmp(const char *rules, int debug, const struct sockaddr *addr,
 
   case AF_INET6:
     if (addrlen < sizeof(struct sockaddr_in6))
-      return -1;
+      goto LIBSOCKFILTER_DONE;
 
     (void)inet_ntop(AF_INET6, &(((const struct sockaddr_in6 *)addr)->sin6_addr),
                     buf, INET6_ADDRSTRLEN);
@@ -79,7 +80,7 @@ int sockcmp(const char *rules, int debug, const struct sockaddr *addr,
     break;
 
   default:
-    return -1;
+    goto LIBSOCKFILTER_DONE;
     break;
   }
 

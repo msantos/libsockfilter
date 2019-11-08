@@ -68,4 +68,4 @@ LD_PRELOAD=./libsockfilter_accept.so \
 
 # SEE ALSO
 
-_connect_(2), _accept_(2) tcprules(1), hosts.allow(5), hosts.deny(5)
+_connect_(2), _accept_(2), _tcprules_(1), _hosts.allow_(5), _hosts.deny_(5)

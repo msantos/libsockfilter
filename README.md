@@ -66,6 +66,17 @@ LD_PRELOAD=./libsockfilter_accept.so \
  nc -vvv -k -l 9999
 ~~~
 
+## ipsum
+
+Using [ipsum](https://github.com/stamparm/ipsum):
+
+~~~
+(
+curl --compressed https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt 2>/dev/null | awk '/^#/{ next } $2 ~ /^[1-2]$/{next} {print $1 ":deny"}'
+echo :allow
+) | tcprules rules.cdb rules.cdb.tmp
+~~~
+
 # SEE ALSO
 
 _connect_(2), _accept_(2), _tcprules_(1), _hosts.allow_(5), _hosts.deny_(5)

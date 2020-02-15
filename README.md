@@ -21,6 +21,14 @@ filtering to any dynamically linked application using
 In contrast to managing a firewall, `libsockfilter` allows applications
 to enforce network access without requiring any special privileges.
 
+libsockfilter requires [libcdb](https://www.corpit.ru/mjt/tinycdb.html).
+
+# BUILD
+
+    apt install libcdb-dev
+    apt install ucspi-tcp-ipv6 # or ucspi-tcp
+    make
+
 # ENVIRONMENT VARIABLES
 
 ## common

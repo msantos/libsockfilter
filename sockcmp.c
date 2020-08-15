@@ -1,4 +1,4 @@
-/* Copyright (c) 2019, Michael Santos <michael.santos@gmail.com>
+/* Copyright (c) 2019-2020, Michael Santos <michael.santos@gmail.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -25,7 +25,7 @@
 
 #include "sockcmp.h"
 
-int sockcmp(const char *rules, int debug, const struct sockaddr *addr,
+int sockcmp(const char *rules, int opt, const struct sockaddr *addr,
             socklen_t addrlen) {
   char buf[INET6_ADDRSTRLEN] = {0};
   char *p;
@@ -42,13 +42,13 @@ int sockcmp(const char *rules, int debug, const struct sockaddr *addr,
 
   fd = open(rules, O_RDONLY);
   if (fd < 0) {
-    if (debug)
+    if (opt & LIBSOCKFILTER_DEBUG)
       (void)fprintf(stderr, "libsockfilter:%s:%s\n", rules, strerror(errno));
     return -1;
   }
 
   if (cdb_init(&c, fd) != 0) {
-    if (debug)
+    if (opt & LIBSOCKFILTER_DEBUG)
       (void)fprintf(stderr, "libsockfilter:unable to open:%s\n", rules);
     (void)close(fd);
     return -1;
@@ -62,7 +62,7 @@ int sockcmp(const char *rules, int debug, const struct sockaddr *addr,
     (void)inet_ntop(AF_INET, &(((const struct sockaddr_in *)addr)->sin_addr),
                     buf, INET6_ADDRSTRLEN);
 
-    if (debug)
+    if (opt & LIBSOCKFILTER_DEBUG)
       (void)fprintf(stderr, "libsockfilter:%s:AF_INET:%s:%u\n", rules, buf,
                     ntohs(((const struct sockaddr_in *)addr)->sin_port));
     break;
@@ -74,7 +74,7 @@ int sockcmp(const char *rules, int debug, const struct sockaddr *addr,
     (void)inet_ntop(AF_INET6, &(((const struct sockaddr_in6 *)addr)->sin6_addr),
                     buf, INET6_ADDRSTRLEN);
 
-    if (debug)
+    if (opt & LIBSOCKFILTER_DEBUG)
       (void)fprintf(stderr, "libsockfilter:%s:AF_INET6:%s:%u\n", rules, buf,
                     ntohs(((const struct sockaddr_in *)addr)->sin_port));
     break;
@@ -85,7 +85,7 @@ int sockcmp(const char *rules, int debug, const struct sockaddr *addr,
   }
 
   for (;;) {
-    if (debug)
+    if (opt & LIBSOCKFILTER_DEBUG)
       (void)fprintf(stderr, "match=\"%s\"\n", buf);
 
     if (cdb_find(&c, buf, (unsigned int)strlen(buf)) > 0) {
@@ -94,12 +94,12 @@ int sockcmp(const char *rules, int debug, const struct sockaddr *addr,
         _exit(111);
       switch (data[0]) {
       case 'D':
-        if (debug)
+        if (opt & LIBSOCKFILTER_DEBUG)
           (void)fprintf(stderr, "libsockfilter:%s:blocked\n", buf);
         rv = -1;
         break;
       default:
-        if (debug)
+        if (opt & LIBSOCKFILTER_DEBUG)
           (void)fprintf(stderr, "libsockfilter:%s:allowed\n", buf);
         rv = 0;
         break;

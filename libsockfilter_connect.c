@@ -1,4 +1,4 @@
-/* Copyright (c) 2019, Michael Santos <michael.santos@gmail.com>
+/* Copyright (c) 2019-2020, Michael Santos <michael.santos@gmail.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -40,8 +40,12 @@ void _init(void) {
 }
 
 int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
-  if ((env_connect != NULL) &&
-      sockcmp(env_connect, debug == NULL ? 0 : 1, addr, addrlen) < 0) {
+  int opt = 0;
+
+  if (debug)
+    opt |= LIBSOCKFILTER_DEBUG;
+
+  if ((env_connect != NULL) && sockcmp(env_connect, opt, addr, addrlen) < 0) {
     errno = EPERM;
     return -1;
   }

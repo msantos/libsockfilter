@@ -1,4 +1,4 @@
-/* Copyright (c) 2019, Michael Santos <michael.santos@gmail.com>
+/* Copyright (c) 2019-2020, Michael Santos <michael.santos@gmail.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -41,6 +41,7 @@ void _init(void) {
 
 int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
   int fd;
+  int opt = 0;
 
   fd = sys_accept(sockfd, addr, addrlen);
   if (fd < 0)
@@ -49,7 +50,10 @@ int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
   if (env_accept == NULL)
     return fd;
 
-  if (sockcmp(env_accept, debug == NULL ? 0 : 1, addr, *addrlen) < 0) {
+  if (debug)
+    opt |= LIBSOCKFILTER_DEBUG;
+
+  if (sockcmp(env_accept, opt, addr, *addrlen) < 0) {
     (void)close(fd);
     errno = EPERM;
     return -1;

@@ -60,6 +60,7 @@ $ sudo apt install ucspi-tcp-ipv6 # or ucspi-tcp
 cat <<EOF > rules.txt
 192.168.1.1:deny
 127:deny
+::1:deny
 :allow
 EOF
 

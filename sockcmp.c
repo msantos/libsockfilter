@@ -110,12 +110,26 @@ int sockcmp(const char *rules, int opt, const struct sockaddr *addr,
     if (buf[0] == '\0')
       break;
 
-    /* XXX IPv4 only: 127.1.2.3, 127.1.2, 127.1, 127 */
-    p = strrchr(buf, '.');
-    if (p == NULL)
-      buf[0] = '\0';
-    else
-      *p = '\0';
+    switch (addr->sa_family) {
+    case AF_INET:
+      /* IPv4: 127.1.2.3, 127.1.2, 127.1, 127 */
+      p = strrchr(buf, '.');
+      if (p == NULL)
+        buf[0] = '\0';
+      else
+        *p = '\0';
+      break;
+    case AF_INET6:
+      /* IPv6: 2001:4860:4860::8888, 2001:4860:4860::, 2001:4860:4860: */
+      p = strrchr(buf, ':');
+      if (p == NULL)
+        buf[0] = '\0';
+      else
+        *p = '\0';
+      break;
+    default:
+      goto LIBSOCKFILTER_DONE;
+    }
   }
 
 LIBSOCKFILTER_DONE:

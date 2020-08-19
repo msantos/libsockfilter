@@ -21,13 +21,17 @@ int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 #pragma GCC diagnostic warning "-Wpedantic"
 
 char *env_accept = NULL;
-char *debug;
+int opt = 0;
 
 void _init(void) {
   const char *err;
+  char *debug;
 
   env_accept = getenv("LIBSOCKFILTER_ACCEPT");
   debug = getenv("LIBSOCKFILTER_DEBUG");
+
+  if (debug)
+    opt |= LIBSOCKFILTER_DEBUG;
 
 #pragma GCC diagnostic ignored "-Wpedantic"
   sys_accept = dlsym(RTLD_NEXT, "accept");
@@ -41,7 +45,6 @@ void _init(void) {
 
 int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
   int fd;
-  int opt = 0;
 
   fd = sys_accept(sockfd, addr, addrlen);
   if (fd < 0)
@@ -49,9 +52,6 @@ int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
 
   if (env_accept == NULL)
     return fd;
-
-  if (debug)
-    opt |= LIBSOCKFILTER_DEBUG;
 
   if (sockcmp(env_accept, opt, addr, *addrlen) < 0) {
     (void)close(fd);

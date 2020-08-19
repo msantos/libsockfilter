@@ -21,13 +21,17 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 #pragma GCC diagnostic warning "-Wpedantic"
 
 char *env_connect = NULL;
-char *debug;
+int opt = 0;
 
 void _init(void) {
   const char *err;
+  char *debug;
 
   env_connect = getenv("LIBSOCKFILTER_CONNECT");
   debug = getenv("LIBSOCKFILTER_DEBUG");
+
+  if (debug)
+    opt |= LIBSOCKFILTER_DEBUG;
 
 #pragma GCC diagnostic ignored "-Wpedantic"
   sys_connect = dlsym(RTLD_NEXT, "connect");
@@ -40,11 +44,6 @@ void _init(void) {
 }
 
 int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
-  int opt = 0;
-
-  if (debug)
-    opt |= LIBSOCKFILTER_DEBUG;
-
   if ((env_connect != NULL) && sockcmp(env_connect, opt, addr, addrlen) < 0) {
     errno = EPERM;
     return -1;

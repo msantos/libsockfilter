@@ -1,4 +1,4 @@
-/* Copyright (c) 2019-2020, Michael Santos <michael.santos@gmail.com>
+/* Copyright (c) 2019-2021, Michael Santos <michael.santos@gmail.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,13 +15,14 @@
 #include "libsockfilter.h"
 
 void _init(void);
-int (*sys_connect)(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+static int (*sys_connect)(int sockfd, const struct sockaddr *addr,
+                          socklen_t addrlen);
 #pragma GCC diagnostic ignored "-Wpedantic"
 int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 #pragma GCC diagnostic warning "-Wpedantic"
 
-char *env_connect = NULL;
-int opt = 0;
+static char *env_connect = NULL;
+static int opt = 0;
 
 void _init(void) {
   const char *err;

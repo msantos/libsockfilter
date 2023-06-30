@@ -25,9 +25,11 @@ libsockfilter requires [libcdb](https://www.corpit.ru/mjt/tinycdb.html).
 
 # BUILD
 
-    apt install libcdb-dev
-    apt install ucspi-tcp-ipv6 # or ucspi-tcp
-    make
+```
+apt install libcdb-dev
+apt install ucspi-tcp-ipv6 # or ucspi-tcp
+make
+```
 
 # ENVIRONMENT VARIABLES
 
@@ -40,17 +42,17 @@ libsockfilter requires [libcdb](https://www.corpit.ru/mjt/tinycdb.html).
 
 `LIBSOCKFILTER_ACCEPT`
 : Path to rules database. If the rules database is not accessible,
-  all connections are dropped.
+all connections are dropped.
 
 ## libsockfilter\_connect
 
 `LIBSOCKFILTER_CONNECT`
 : Path to rules database. If the rules database is not accessible,
-  all connections are dropped.
+all connections are dropped.
 
 # EXAMPLES
 
-~~~
+```
 $ sudo apt install ucspi-tcp-ipv6 # or ucspi-tcp
 
 # default is deny
@@ -73,19 +75,19 @@ LD_PRELOAD=./libsockfilter_connect.so \
 LD_PRELOAD=./libsockfilter_accept.so \
  LIBSOCKFILTER_ACCEPT=./rules.cdb \
  nc -vvv -k -l 9999
-~~~
+```
 
 ## ipsum
 
 Using [ipsum](https://github.com/stamparm/ipsum):
 
-~~~
+```
 (
 curl --compressed https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt 2>/dev/null | awk '/^#/{ next } $2 ~ /^[1-2]$/{next} {print $1 ":deny"}'
 echo :allow
 ) | tcprules rules.cdb rules.cdb.tmp
-~~~
+```
 
 # SEE ALSO
 
-_connect_(2), _accept_(2), _tcprules_(1), _hosts.allow_(5), _hosts.deny_(5)
+*connect*(2), *accept*(2), *tcprules*(1), *hosts.allow*(5), *hosts.deny*(5)

@@ -16,8 +16,13 @@
 
 void _init(void);
 static int (*sys_accept)(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+static int (*sys_accept4)(int sockfd, struct sockaddr *addr, socklen_t *addrlen,
+                          int flags);
 #pragma GCC diagnostic ignored "-Wpedantic"
-int __attribute__((visibility("default"))) accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+int __attribute__((visibility("default")))
+accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+int __attribute__((visibility("default")))
+accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
 #pragma GCC diagnostic warning "-Wpedantic"
 
 static char *env_accept = NULL;
@@ -35,6 +40,7 @@ void _init(void) {
 
 #pragma GCC diagnostic ignored "-Wpedantic"
   sys_accept = dlsym(RTLD_NEXT, "accept");
+  sys_accept4 = dlsym(RTLD_NEXT, "accept4");
 #pragma GCC diagnostic warning "-Wpedantic"
   err = dlerror();
 
@@ -47,6 +53,25 @@ int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
   int fd;
 
   fd = sys_accept(sockfd, addr, addrlen);
+  if (fd < 0)
+    return fd;
+
+  if (env_accept == NULL)
+    return fd;
+
+  if (sockcmp(env_accept, opt, addr, *addrlen) < 0) {
+    (void)close(fd);
+    errno = EPERM;
+    return -1;
+  }
+
+  return fd;
+}
+
+int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags) {
+  int fd;
+
+  fd = sys_accept4(sockfd, addr, addrlen, flags);
   if (fd < 0)
     return fd;
 

@@ -1,3 +1,4 @@
+.PHONY: all
 all: libsockfilter_accept libsockfilter_connect
 
 libsockfilter_accept:
@@ -20,5 +21,10 @@ libsockfilter_connect:
 		-l:libcdb_pic.a \
 	 	-Wl,-z,relro,-z,now -Wl,-z,noexecstack
 
+.PHONY: clean
 clean:
 	-@rm libsockfilter_accept.so libsockfilter_connect.so
+
+.PHONY: test
+test:
+	@env LD_LIBRARY_PATH=. bats test

@@ -1,7 +1,7 @@
 .PHONY: all
-all: libsockfilter_accept libsockfilter_connect
+all: libsockfilter_accept.so libsockfilter_connect.so
 
-libsockfilter_accept:
+libsockfilter_accept.so:
 	$(CC) -Wall -Wextra -pedantic -D_GNU_SOURCE -nostartfiles -shared -fpic -fPIC \
 		-fvisibility=hidden \
 		-Wconversion -Wshadow \
@@ -11,7 +11,7 @@ libsockfilter_accept:
 		-l:libcdb_pic.a \
 	 	-Wl,-z,relro,-z,now -Wl,-z,noexecstack
 
-libsockfilter_connect:
+libsockfilter_connect.so:
 	$(CC) -Wall -Wextra -pedantic -D_GNU_SOURCE -nostartfiles -shared -fpic -fPIC \
 		-fvisibility=hidden \
 		-Wconversion -Wshadow \
@@ -26,5 +26,5 @@ clean:
 	-@rm libsockfilter_accept.so libsockfilter_connect.so
 
 .PHONY: test
-test:
+test: libsockfilter_accept.so libsockfilter_connect.so
 	@env LD_LIBRARY_PATH=. bats test

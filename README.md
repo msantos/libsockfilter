@@ -6,11 +6,11 @@ libsockfilter - connection filtering for dynamically linked applications
 
 * server
 
-LD\_PRELOAD=libsockfilter\_accept.so *COMMAND* *ARG* *...*
+LD_PRELOAD=libsockfilter_accept.so *COMMAND* *ARG* *...*
 
 * client
 
-LD\_PRELOAD=libsockfilter\_connect.so *COMMAND* *ARG* *...*
+LD_PRELOAD=libsockfilter_connect.so *COMMAND* *ARG* *...*
 
 # DESCRIPTION
 
@@ -38,13 +38,13 @@ make
 `LIBSOCKFILTER_DEBUG`
 : Write errors to stdout (default: disabled).
 
-## libsockfilter\_accept
+## libsockfilter_accept
 
 `LIBSOCKFILTER_ACCEPT`
 : Path to rules database. If the rules database is not accessible,
 all connections are dropped.
 
-## libsockfilter\_connect
+## libsockfilter_connect
 
 `LIBSOCKFILTER_CONNECT`
 : Path to rules database. If the rules database is not accessible,

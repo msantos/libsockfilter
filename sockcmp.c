@@ -36,7 +36,8 @@ int sockcmp(const char *rules, int opt, const struct sockaddr *addr,
   int rv = -1;
 
   if (rules == NULL) {
-    (void)fprintf(stderr, "libsockfilter:rules is NULL!\n");
+    if (opt & LIBSOCKFILTER_DEBUG)
+      (void)fprintf(stderr, "libsockfilter:rules is NULL!\n");
     return -1;
   }
 
